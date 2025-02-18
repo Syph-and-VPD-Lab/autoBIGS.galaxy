@@ -1,7 +1,7 @@
 <tool id="autobigs-cli" name="AutoBIGS.CLI" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.05">
 	<description>Automated MLST typing from PubMLST and InstitutPasteur.</description>
 	<macros>
-		<token name="@TOOL_VERSION@">0.4.2</token>
+		<token name="@TOOL_VERSION@">0.4.3</token>
 		<token name="@VERSION_SUFFIX@">0</token>
     	<import>autobigs-cli_macros.xml</import>
 	    <expand macro="bio_tools"/>
@@ -35,7 +35,9 @@
 						<option value="databases"/>
 					</param>
 					<when value="schema">
-						<param name="selected_schema" argument="--retrieve-bigsdb-schemas" label="Retrieve schemas for" type="integer" min="0"/>
+						<repeat name="schemas" title="Schemas">
+							<param name="selected_schema" argument="--retrieve-bigsdb-schemas" label="Retrieve schemas for" type="integer" min="0"/>
+						</repeat>
 					</when>
                     <when value="databases">
                     <!-- No need to do anything -->
@@ -50,7 +52,9 @@
 		</conditional>
 	</inputs>
 	<outputs>
-		<data name="mlst_profiles_output" label="${tool.name} on ${on_string}" format="csv" />
+		<data name="mlst_profiles_output" label="${tool.name} on ${on_string}" format="csv">
+			<filter>mode == "st"</filter>
+		</data>
 	</outputs>
     <tests>
         <test>
