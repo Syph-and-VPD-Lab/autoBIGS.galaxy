@@ -14,6 +14,12 @@
             "type": "shell",
             "command": "planemo serve",
             "problemMatcher": []
+        },
+        {
+            "label": "run tests",
+            "type": "shell",
+            "command": "planemo test autobigs-cli.xml --test_output_junit test_results/junit_results.xml --test_output_json test_results/results.json --test_output test_results/human.html",
+            "problemMatcher": []
         }
     ]
 }

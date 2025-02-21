@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             cloud 'rsys-devel'
-            defaultContainer 'pip'
+            defaultContainer 'rootless-pip'
             inheritFrom 'pip'
         }
     }
@@ -11,6 +11,8 @@ pipeline {
         stage ("install") {
             steps {
                 sh 'pip install -r requirements.txt'
+                sh 'pip install standard-imghdr'
+                sh 'useradd galaxy -m'
             }
         }
         stage ("lint") {

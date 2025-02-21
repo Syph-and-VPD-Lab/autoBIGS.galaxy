@@ -1,4 +1,4 @@
-<tool id="autobigs-cli" name="AutoBIGS.CLI" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.05">
+<tool id="autobigs-cli" name="autoBIGS.cli" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.05">
 	<description>Automated MLST typing from PubMLST and InstitutPasteur.</description>
 	<macros>
 		<token name="@TOOL_VERSION@">0.5.0</token>
@@ -12,14 +12,14 @@
 	</requirements>
 
 	<command detect_errors="exit_code"><![CDATA[
-			#if $mode.operation == "info":
-				#if $select_info.retrieved == "schema":
+			#if $mode['operation'] == "info":
+				#if $select_info['retrieved'] == "schemas":
 					autoBIGS info $selected_schema --csv $info_out
-				#else if $select_info.retrieved == "databases":
+				#else if $select_info['retrieved'] == "databases":
 					autoBIGS info --retrieve-bigsdbs --csv $info_out
 				#end if
-			#else if $mode.operation == "st":
-				autoBIGS st "$fastas" "$seqdefdb" $schema "$mlst_profiles_output"
+			#else if $mode['operation'] == "st":
+				autoBIGS st "$fastas" "$seqdefdb" $schema "$mlst_profiles_output" $stop_on_fail
 			#end if
 	]]></command>
 	<inputs>
@@ -30,13 +30,13 @@
 			</param>
 			<when value="info">
 				<conditional name="select_info">
-					<param name="retrieved" label="Schema or Database List" type="select">
-						<option value="schema">Available Schemas for Database</option>
+					<param name="retrieved" label="Schemas or Database List" type="select">
+						<option value="schemas">Available Schemas for Database</option>
 						<option value="databases">Available Databases</option>
 					</param>
-					<when value="schema">
-						<repeat name="schemas" title="Schemas" min="1">
-							<param name="selected_schema" argument="--retrieve-bigsdb-schemas" label="Retrieve schemas for" type="integer" min="0"/>
+					<when value="schemas">
+						<repeat name="schemas_list" title="Schemas" min="1">
+							<param name="selected_schema" argument="--retrieve-bigsdb-schemas" label="Retrieve schemas for" type="text"/>
 						</repeat>
 					</when>
 					<when value="databases">
@@ -48,7 +48,7 @@
 				<param name="fastas" label="FASTA files" type="data" format="fasta,fas,fa,fna,ffn,faa,mpfa,frn"/>
 				<param name="seqdefdb" label="BIGSdb SeqDef Name" type="text" optional="false"/>
 				<param name="schema" label="BIGSdb SeqDef Schema ID" type="integer" min="0"/>
-				<param name="stop_on_fail" argument="--sof" label="Stop on failure to match" value="false" type="boolean"/>
+				<param name="stop_on_fail" label="Stop on failure to match" truevalue="--sof" falsevalue="" value="false" type="boolean"/>
 			</when>
 		</conditional>
 	</inputs>
@@ -56,8 +56,8 @@
 		<data name="mlst_profiles_output" label="${tool.name} on ${on_string}" format="csv">
 			<filter>mode['operation'] == "st"</filter>
 		</data>
-		<data name="info_out" label="${tool.name} supported databases/schemas" format="csv">
-			<filter>mode['operation'] == "info"</filter>
+		<data name="info_out" label="${tool.name} supported Databases" format="csv">
+			<filter>mode['operation'] == "info" and select_info['retrieved'] == 'databases'</filter>
 		</data>
 	</outputs>
     <tests>
@@ -73,8 +73,8 @@
             <param name="retrieved" value="databases" />
             <output name="info_out">
 				<assert_contents>
-					<has_line line="BIGSdb Names,Source"/>
-					<has_line line="pubmlst_bordetella_seqdef,https://bigsdb.pasteur.fr/api"/>
+					<has_text text="BIGSdb Names,Source"/>
+					<has_text text="pubmlst_bordetella_seqdef,https://bigsdb.pasteur.fr/api"/>
 				</assert_contents>
 			</output>
         </test>
