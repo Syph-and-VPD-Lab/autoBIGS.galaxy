@@ -1,7 +1,7 @@
 <tool id="autobigs-cli" name="AutoBIGS.CLI" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="21.05">
 	<description>Automated MLST typing from PubMLST and InstitutPasteur.</description>
 	<macros>
-		<token name="@TOOL_VERSION@">0.4.3</token>
+		<token name="@TOOL_VERSION@">0.5.0</token>
 		<token name="@VERSION_SUFFIX@">0</token>
     	<import>autobigs-cli_macros.xml</import>
 	    <expand macro="bio_tools"/>
@@ -12,52 +12,56 @@
 	</requirements>
 
 	<command detect_errors="exit_code"><![CDATA[
-			#if $operation == "info":
-				#if $retrieved == "schema":
-					autoBIGS info $selected_schema
-				#else if $retrieved == "databases":
-					autoBIGS info --retrieve-bigsdbs
+			#if $mode.operation == "info":
+				#if $select_info.retrieved == "schema":
+					autoBIGS info $selected_schema --csv $info_out
+				#else if $select_info.retrieved == "databases":
+					autoBIGS info --retrieve-bigsdbs --csv $info_out
 				#end if
-			#else if $operation == "st":
-				autoBIGS st $fastas $seqdefdb $schema $mlst_profiles_output
+			#else if $mode.operation == "st":
+				autoBIGS st "$fastas" "$seqdefdb" $schema "$mlst_profiles_output"
 			#end if
 	]]></command>
 	<inputs>
 		<conditional name="mode">
 			<param name="operation" label="Operation" type="select">
-				<option value="info"/>
-				<option value="st"/>
+				<option value="info">Retrieve Database Information</option>
+				<option value="st">Perform Sequence Typing</option>
 			</param>
 			<when value="info">
-				<conditional name="select-info">
+				<conditional name="select_info">
 					<param name="retrieved" label="Schema or Database List" type="select">
-						<option value="schema"/>
-						<option value="databases"/>
+						<option value="schema">Available Schemas for Database</option>
+						<option value="databases">Available Databases</option>
 					</param>
 					<when value="schema">
-						<repeat name="schemas" title="Schemas">
+						<repeat name="schemas" title="Schemas" min="1">
 							<param name="selected_schema" argument="--retrieve-bigsdb-schemas" label="Retrieve schemas for" type="integer" min="0"/>
 						</repeat>
 					</when>
-                    <when value="databases">
-                    <!-- No need to do anything -->
-                    </when>
+					<when value="databases">
+
+					</when>
 				</conditional>
 			</when>
 			<when value="st">
 				<param name="fastas" label="FASTA files" type="data" format="fasta,fas,fa,fna,ffn,faa,mpfa,frn"/>
-				<param name="seqdefdb" label="BIGSdb SeqDef Name" type="text"/>
+				<param name="seqdefdb" label="BIGSdb SeqDef Name" type="text" optional="false"/>
 				<param name="schema" label="BIGSdb SeqDef Schema ID" type="integer" min="0"/>
+				<param name="stop_on_fail" argument="--sof" label="Stop on failure to match" value="false" type="boolean"/>
 			</when>
 		</conditional>
 	</inputs>
 	<outputs>
 		<data name="mlst_profiles_output" label="${tool.name} on ${on_string}" format="csv">
-			<filter>mode == "st"</filter>
+			<filter>mode.operation == "st"</filter>
+		</data>
+		<data name="info_out" label="${tool.name} supported databases/schemas" format="csv">
+			<filter>mode.operation == "info"</filter>
 		</data>
 	</outputs>
     <tests>
-        <test>
+        <test expect_num_outputs="1">
             <param name="operation" value="st" />
             <param name="fastas" value="tohama_I_bpertussis.fasta" />
             <param name="seqdefdb" value="pubmlst_bordetella_seqdef" />
@@ -89,7 +93,6 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --exact, -ex          Should run exact matching rather than returning all similar ones
   --stop-on-fail, -sof  Should the algorithm stop in the case there are no matches (or partial matches when
                         expecting exact matches).
 
@@ -98,8 +101,8 @@ options:
     <citations>
         <citation type="bibtex">
 @book{Deng2025RealYHD,
-title = {RealYHD/autoBIGS.cli},
-url = {https://github.com/RealYHD/autoBIGS.cli},
+title = {Syph-and-VPD-Lab/autoBIGS.cli},
+url = {https://github.com/Syph-and-VPD-Lab/autoBIGS.cli},
 author = {Deng, Harrison},
 date = {2025-01-24},
 year = {2025},

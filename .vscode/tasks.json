@@ -8,6 +8,12 @@
             "type": "shell",
             "command": "planemo lint",
             "problemMatcher": []
+        },
+        {
+            "label": "serve",
+            "type": "shell",
+            "command": "planemo serve",
+            "problemMatcher": []
         }
     ]
 }
