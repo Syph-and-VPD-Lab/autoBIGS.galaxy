@@ -14,9 +14,9 @@
 	<command detect_errors="exit_code"><![CDATA[
 			#if $mode['operation'] == "info":
 				#if $select_info['retrieved'] == "schemas":
-					autoBIGS info $selected_schema --csv $info_out
+					autoBIGS info $selected_schema --csv $info_db_out
 				#else if $select_info['retrieved'] == "databases":
-					autoBIGS info --retrieve-bigsdbs --csv $info_out
+					autoBIGS info --retrieve-bigsdbs --csv $info_schemes_out
 				#end if
 			#else if $mode['operation'] == "st":
 				autoBIGS st "$fastas" "$seqdefdb" $schema "$mlst_profiles_output" $stop_on_fail
@@ -31,12 +31,12 @@
 			<when value="info">
 				<conditional name="select_info">
 					<param name="retrieved" label="Schemas or Database List" type="select">
-						<option value="schemas">Available Schemas for Database</option>
+						<option value="schemes">Available Schemas for Database</option>
 						<option value="databases">Available Databases</option>
 					</param>
-					<when value="schemas">
-						<repeat name="schemas_list" title="Schemas" min="1">
-							<param name="selected_schema" argument="--retrieve-bigsdb-schemas" label="Retrieve schemas for" type="text"/>
+					<when value="schemes">
+						<repeat name="schemes_list" title="Schemes" min="1">
+							<param name="selected_db" argument="--retrieve-bigsdb-schemas" label="Database to retrieve schemes from" type="text"/>
 						</repeat>
 					</when>
 					<when value="databases">
@@ -56,8 +56,11 @@
 		<data name="mlst_profiles_output" label="${tool.name} on ${on_string}" format="csv">
 			<filter>mode['operation'] == "st"</filter>
 		</data>
-		<data name="info_out" label="${tool.name} supported Databases" format="csv">
+		<data name="info_db_out" label="${tool.name} supported Databases" format="csv">
 			<filter>mode['operation'] == "info" and select_info['retrieved'] == 'databases'</filter>
+		</data>
+		<data name="info_schemes_out" label="${tool.name} supported Databases" format="csv">
+			<filter>mode['operation'] == "info" and select_info['retrieved'] == 'schemes'</filter>
 		</data>
 	</outputs>
     <tests>
@@ -71,7 +74,7 @@
         <test expect_num_outputs="1">
             <param name="operation" value="info" />
             <param name="retrieved" value="databases" />
-            <output name="info_out">
+            <output name="info_db_out">
 				<assert_contents>
 					<has_text text="BIGSdb Names,Source"/>
 					<has_text text="pubmlst_bordetella_seqdef,https://bigsdb.pasteur.fr/api"/>
