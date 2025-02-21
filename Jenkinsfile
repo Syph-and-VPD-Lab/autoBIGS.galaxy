@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             cloud 'rsys-devel'
-            defaultContainer 'rootless-pip'
+            defaultContainer 'pip'
             inheritFrom 'pip'
         }
     }
