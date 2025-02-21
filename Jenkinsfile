@@ -3,8 +3,10 @@ pipeline {
         kubernetes {
             cloud 'rsys-devel'
             defaultContainer 'pip'
+            inheritFrom 'pip'
         }
     }
+    
     stages {
         stage ("install") {
             steps {
