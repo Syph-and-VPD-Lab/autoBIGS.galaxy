@@ -54,19 +54,29 @@
 	</inputs>
 	<outputs>
 		<data name="mlst_profiles_output" label="${tool.name} on ${on_string}" format="csv">
-			<filter>mode.operation == "st"</filter>
+			<filter>mode['operation'] == "st"</filter>
 		</data>
 		<data name="info_out" label="${tool.name} supported databases/schemas" format="csv">
-			<filter>mode.operation == "info"</filter>
+			<filter>mode['operation'] == "info"</filter>
 		</data>
 	</outputs>
     <tests>
         <test expect_num_outputs="1">
             <param name="operation" value="st" />
-            <param name="fastas" value="tohama_I_bpertussis.fasta" />
+            <param name="fastas" value="tohama_I_bpertussis_wgs.fasta" />
             <param name="seqdefdb" value="pubmlst_bordetella_seqdef" />
             <param name="schema" value="3" />
-            <output name="mlst_profiles_output" file="results.csv" ftype="csv" />
+            <output name="mlst_profiles_output" file="tohama_I_bpertussis_wgs_typed.csv" ftype="csv" />
+        </test>
+        <test expect_num_outputs="1">
+            <param name="operation" value="info" />
+            <param name="retrieved" value="databases" />
+            <output name="info_out">
+				<assert_contents>
+					<has_line line="BIGSdb Names,Source"/>
+					<has_line line="pubmlst_bordetella_seqdef,https://bigsdb.pasteur.fr/api"/>
+				</assert_contents>
+			</output>
         </test>
     </tests>
 	<help><![CDATA[
