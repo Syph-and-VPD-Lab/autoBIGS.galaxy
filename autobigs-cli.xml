@@ -59,7 +59,7 @@
 		<data name="info_db_out" label="${tool.name} supported Databases" format="csv">
 			<filter>mode['operation'] == "info" and select_info['retrieved'] == 'databases'</filter>
 		</data>
-		<data name="info_schemes_out" label="${tool.name} supported Databases" format="csv">
+		<data name="info_schemes_out" label="${tool.name} supported Schemes" format="csv">
 			<filter>mode['operation'] == "info" and select_info['retrieved'] == 'schemes'</filter>
 		</data>
 	</outputs>
