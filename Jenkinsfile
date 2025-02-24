@@ -10,11 +10,10 @@ pipeline {
     stages {
         stage ("install") {
             steps {
-                sh 'conda install python==3.12.7 pip -y -q'
+                sh 'conda env update -n base --file environment.yml'
                 sh 'useradd galaxy -m'
                 sh 'apt-get update'
                 sh 'apt-get install sudo -y'
-                sh 'pip install -r requirements.txt'
             }
         }
         stage ("lint") {
