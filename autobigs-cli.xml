@@ -12,13 +12,13 @@
 	</requirements>
 
 	<command detect_errors="exit_code"><![CDATA[
-			#if $mode['operation'] == "info":
-				#if $select_info['retrieved'] == "schemas":
-					autoBIGS info $selected_schema --csv $info_db_out
-				#else if $select_info['retrieved'] == "databases":
+			#if $mode.operation == "info":
+				#if $mode.select_info.retrieved == "schemes":
+					autoBIGS info --retrieve-bigsdb-schemas#for $scheme in $mode.select_info.schemes_list# '${scheme.selected_db}' #end for# --csv $info_db_out
+				#else if $mode.select_info.retrieved == "databases":
 					autoBIGS info --retrieve-bigsdbs --csv $info_schemes_out
 				#end if
-			#else if $mode['operation'] == "st":
+			#else if $mode.operation == "st":
 				autoBIGS st "$fastas" "$seqdefdb" $schema "$mlst_profiles_output" $stop_on_fail
 			#end if
 	]]></command>
@@ -30,7 +30,7 @@
 			</param>
 			<when value="info">
 				<conditional name="select_info">
-					<param name="retrieved" label="Schemas or Database List" type="select">
+					<param name="retrieved" label="Schemes or Database List" type="select">
 						<option value="schemes">Available Schemas for Database</option>
 						<option value="databases">Available Databases</option>
 					</param>
@@ -57,10 +57,10 @@
 			<filter>mode['operation'] == "st"</filter>
 		</data>
 		<data name="info_db_out" label="${tool.name} supported Databases" format="csv">
-			<filter>mode['operation'] == "info" and select_info['retrieved'] == 'databases'</filter>
+			<filter>mode['operation'] == "info" and mode['select_info']['retrieved'] == 'databases'</filter>
 		</data>
 		<data name="info_schemes_out" label="${tool.name} supported Schemes" format="csv">
-			<filter>mode['operation'] == "info" and select_info['retrieved'] == 'schemes'</filter>
+			<filter>mode['operation'] == "info" and mode['select_info']['retrieved'] == 'schemes'</filter>
 		</data>
 	</outputs>
     <tests>
@@ -78,6 +78,18 @@
 				<assert_contents>
 					<has_text text="BIGSdb Names,Source"/>
 					<has_text text="pubmlst_bordetella_seqdef,https://bigsdb.pasteur.fr/api"/>
+				</assert_contents>
+			</output>
+        </test>
+        <test expect_num_outputs="1">
+            <param name="operation" value="info" />
+			<repeat name="schemes_list">
+            	<param name="selected_db" value="pubmlst_bordetella_seqdef" />
+			</repeat>
+            <output name="info_schemes_out">
+				<assert_contents>
+					<has_text text="Name,ID"/>
+					<has_text text="MLST,3"/>
 				</assert_contents>
 			</output>
         </test>
