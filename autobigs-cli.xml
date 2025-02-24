@@ -14,9 +14,9 @@
 	<command detect_errors="exit_code"><![CDATA[
 			#if $mode.operation == "info":
 				#if $mode.select_info.retrieved == "schemes":
-					autoBIGS info --retrieve-bigsdb-schemas#for $scheme in $mode.select_info.schemes_list# '${scheme.selected_db}' #end for# --csv $info_db_out
+					autoBIGS info --retrieve-bigsdb-schemas#for $scheme in $mode.select_info.schemes_list# '${scheme.selected_db}' #end for# --csv $info_schemes_out
 				#else if $mode.select_info.retrieved == "databases":
-					autoBIGS info --retrieve-bigsdbs --csv $info_schemes_out
+					autoBIGS info --retrieve-bigsdbs --csv $info_db_out
 				#end if
 			#else if $mode.operation == "st":
 				autoBIGS st "$fastas" "$seqdefdb" $schema "$mlst_profiles_output" $stop_on_fail
@@ -54,13 +54,13 @@
 	</inputs>
 	<outputs>
 		<data name="mlst_profiles_output" label="${tool.name} on ${on_string}" format="csv">
-			<filter>mode['operation'] == "st"</filter>
+			<filter>mode['operation'] == 'st'</filter>
 		</data>
 		<data name="info_db_out" label="${tool.name} supported Databases" format="csv">
-			<filter>mode['operation'] == "info" and mode['select_info']['retrieved'] == 'databases'</filter>
+			<filter>mode['operation'] == 'info' and mode['select_info']['retrieved'] == 'databases'</filter>
 		</data>
 		<data name="info_schemes_out" label="${tool.name} supported Schemes" format="csv">
-			<filter>mode['operation'] == "info" and mode['select_info']['retrieved'] == 'schemes'</filter>
+			<filter>mode['operation'] == 'info' and mode['select_info']['retrieved'] == 'schemes'</filter>
 		</data>
 	</outputs>
     <tests>
