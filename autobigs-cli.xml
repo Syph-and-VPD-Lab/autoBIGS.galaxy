@@ -19,7 +19,7 @@
 					autoBIGS info --retrieve-bigsdbs --csv $info_db_out
 				#end if
 			#else if $mode.operation == "st":
-				autoBIGS st "$fastas" "$seqdefdb" $schema "$mlst_profiles_output" $stop_on_fail
+				autoBIGS st#for $fasta in $mode.fastas_list# '${fasta.fasta}' #end for#"$seqdefdb" $schema "$mlst_profiles_output" $stop_on_fail
 			#end if
 	]]></command>
 	<inputs>
@@ -45,7 +45,9 @@
 				</conditional>
 			</when>
 			<when value="st">
-				<param name="fastas" label="FASTA files" type="data" format="fasta,fas,fa,fna,ffn,faa,mpfa,frn"/>
+				<repeat name="fastas_list" title="Fasta" min="1">
+					<param name="fasta" label="FASTA file" type="data" format="fasta,fas,fa,fna,ffn,faa,mpfa,frn"/>
+				</repeat>
 				<param name="seqdefdb" label="BIGSdb SeqDef Name" type="text" optional="false"/>
 				<param name="schema" label="BIGSdb SeqDef Schema ID" type="integer" min="0"/>
 				<param name="stop_on_fail" label="Stop on failure to match" truevalue="--sof" falsevalue="" value="false" type="boolean"/>
@@ -66,7 +68,9 @@
     <tests>
         <test expect_num_outputs="1">
             <param name="operation" value="st" />
-            <param name="fastas" value="tohama_I_bpertussis_wgs.fasta" />
+			<repeat name="fastas_list">
+	            <param name="fasta" value="tohama_I_bpertussis_wgs.fasta" />
+			</repeat>
             <param name="seqdefdb" value="pubmlst_bordetella_seqdef" />
             <param name="schema" value="3" />
             <output name="mlst_profiles_output" file="tohama_I_bpertussis_wgs_typed.csv" ftype="csv" />
@@ -96,17 +100,19 @@
     </tests>
 	<help><![CDATA[
 
-usage: autoBIGS info [-h] [--retrieve-bigsdbs] [--retrieve-bigsdb-schemas LIST_BIGSDB_SCHEMAS [LIST_BIGSDB_SCHEMAS ...]]
+usage: autoBIGS info [-h] [--retrieve-bigsdbs] [--retrieve-bigsdb-schemas LIST_BIGSDB_SCHEMAS [LIST_BIGSDB_SCHEMAS ...]] [--csv CSV_OUTPUT]
 
 Fetches the latest BIGSdb MLST database definitions.
 
 options:
   -h, --help            show this help message and exit
-  --retrieve-bigsdbs    Lists all known BIGSdb MLST databases (fetched from known APIs and cached).
-  --retrieve-bigsdb-schemas SCHEMA_IDS
+  --retrieve-bigsdbs, -l
+                        Lists all known BIGSdb MLST databases (fetched from known APIs and cached).
+  --retrieve-bigsdb-schemas LIST_BIGSDB_SCHEMAS
                         Lists the known schema IDs for a given BIGSdb sequence definition database name. The name, and then the ID of the schema is given.
+  --csv, -o CSV_OUTPUT  Output list as CSV at a given path. A suffix is added depending on the action taken.
 
-usage: autoBIGS st [-h] [--exact] [--stop-on-fail] fastas [fastas ...] seqdefdb schema out
+usage: autoBIGS st [-h] [--stop-on-fail] fastas [fastas ...] seqdefdb schema out
 
 Returns MLST exact profile matches.
 
@@ -118,10 +124,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --stop-on-fail, -sof  Should the algorithm stop in the case there are no matches (or partial matches when
-                        expecting exact matches).
-
-
+  --stop-on-fail, -sof  Should the algorithm stop in the case there are no matches (or partial matches when expecting exact matches).
 	]]></help>
     <citations>
         <citation type="bibtex">

@@ -2,19 +2,19 @@ pipeline {
     agent {
         kubernetes {
             cloud 'rsys-devel'
-            defaultContainer 'pip'
-            inheritFrom 'pip'
+            defaultContainer 'miniforge3'
+            inheritFrom 'miniforge'
         }
     }
     
     stages {
         stage ("install") {
             steps {
+                sh 'conda install python==3.12.7 pip -y -q'
                 sh 'useradd galaxy -m'
                 sh 'apt-get update'
                 sh 'apt-get install sudo -y'
-                sh 'sudo -u galaxy pip install -r requirements.txt'
-                sh 'sudo -u galaxy pip install standard-imghdr'
+                sh 'pip install -r requirements.txt'
             }
         }
         stage ("lint") {
