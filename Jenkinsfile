@@ -11,15 +11,15 @@ pipeline {
         stage ("install") {
             steps {
                 sh 'useradd galaxy -m'
-                sh 'apt update'
-                sh 'apt install sudo -y'
-                sh 'pip install -r requirements.txt'
-                sh 'pip install standard-imghdr'
+                sh 'apt-get update'
+                sh 'apt-get install sudo -y'
+                sh 'sudo -u galaxy pip install -r requirements.txt'
+                sh 'sudo -u galaxy pip install standard-imghdr'
             }
         }
         stage ("lint") {
             steps {
-                sh "planemo lint autobigs-cli.xml"
+                sh "sudo -u galaxy planemo lint autobigs-cli.xml"
             }
         }
         stage ("test") {
