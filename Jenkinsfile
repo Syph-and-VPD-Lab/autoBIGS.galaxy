@@ -11,6 +11,7 @@ pipeline {
         stage ("install") {
             steps {
                 sh 'pip install -r requirements.txt'
+                sh 'pip install standard-imghdr'
                 sh 'planemo ci_setup'
             }
         }
