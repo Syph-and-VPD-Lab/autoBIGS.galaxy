@@ -2,6 +2,7 @@
     "recommendations": [
         "mechatroner.rainbow-csv",
         "redhat.vscode-xml",
-        "ms-vscode.live-server"
+        "ms-vscode.live-server",
+        "davelopez.galaxy-tools"
     ]
 }
