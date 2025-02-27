@@ -12,13 +12,13 @@
         {
             "label": "serve",
             "type": "shell",
-            "command": "planemo serve auto-updated-tools-iuc/tools/autobigs",
+            "command": "planemo serve auto-updated-tools-iuc/tools/autobigs --conda_channels https://git.reslate.systems/api/packages/ydeng/conda,bioconda,conda-forge",
             "problemMatcher": []
         },
         {
             "label": "run tests",
             "type": "shell",
-            "command": "planemo test auto-updated-tools-iuc/tools/autobigs/autobigs-cli.xml --test_output_junit test_results/junit_results.xml --test_output_json test_results/results.json --test_output test_results/human.html",
+            "command": "planemo test auto-updated-tools-iuc/tools/autobigs/autobigs-cli.xml --test_output_junit test_results/junit_results.xml --test_output_json test_results/results.json --test_output test_results/human.html --conda_channels https://git.reslate.systems/api/packages/ydeng/conda,bioconda,conda-forge",
             "problemMatcher": []
         }
     ]
